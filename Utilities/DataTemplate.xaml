@@ -6,6 +6,10 @@
         <view:Home />
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type vm:FileScanningVM}">
+        <view:FileScanning />
+    </DataTemplate>
+    
     <DataTemplate DataType="{x:Type vm:CustomerVM}">
         <view:Customers />
     </DataTemplate>

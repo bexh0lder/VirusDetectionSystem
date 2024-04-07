@@ -28,6 +28,8 @@ namespace VirusDetectionSystem.ViewModel
         public ICommand ShipmentsCommand { get; set; }
         public ICommand SettingsCommand { get; set; }
 
+        public ICommand FileScanningCommand { get; set; }
+
         private void Home(object obj) => CurrentView = new HomeVM();
         private void Customer(object obj) => CurrentView = new CustomerVM();
         private void Product(object obj) => CurrentView = new ProductVM();
@@ -35,6 +37,8 @@ namespace VirusDetectionSystem.ViewModel
         private void Transaction(object obj) => CurrentView = new TransactionVM();
         private void Shipment(object obj) => CurrentView = new ShipmentVM();
         private void Setting(object obj) => CurrentView = new SettingVM();
+
+        private void FileScanning(object obj) => CurrentView = new FileScanningVM();
 
         public NavigationVM()
         {
@@ -45,6 +49,8 @@ namespace VirusDetectionSystem.ViewModel
             TransactionsCommand = new RelayCommand(Transaction);
             ShipmentsCommand = new RelayCommand(Shipment);
             SettingsCommand = new RelayCommand(Setting);
+
+            FileScanningCommand = new RelayCommand(FileScanning);
 
             // Startup Page
             CurrentView = new HomeVM();

@@ -23,7 +23,7 @@
         <Border Background="#212529"
         CornerRadius="20" />
 
-        <Grid>
+        <Grid MouseDown="MouseDownEvent" >
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="228" />
@@ -57,17 +57,17 @@
 
                     </Menu:Btn>
 
-                    <!--// Customer //-->
+                    <!--// 文件扫描 //-->
 
                     <Menu:Btn Style="{StaticResource BtnStyle}"
-                  Command="{Binding CustomersCommand}">
+                  Command="{Binding FileScanningCommand}">
 
                         <Grid>
 
                             <Image Source="Images/img_customer.png"
                        Style="{StaticResource Image_Style}" />
 
-                            <TextBlock Text="Customer"
+                            <TextBlock Text="文件扫描"
                            Style="{StaticResource Text_Style}" />
 
                         </Grid>

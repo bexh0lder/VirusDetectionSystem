@@ -25,5 +25,18 @@ namespace VirusDetectionSystem
         {
             Close();
         }
+
+        /// <summary>
+        /// 窗体移动代码
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MouseDownEvent(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                this.DragMove();
+            }
+        }
     }
 }
