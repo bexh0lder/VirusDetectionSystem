@@ -21,36 +21,19 @@ namespace VirusDetectionSystem.ViewModel
         }
 
         public ICommand HomeCommand { get; set; }
-        public ICommand CustomersCommand { get; set; }
-        public ICommand ProductsCommand { get; set; }
-        public ICommand OrdersCommand { get; set; }
-        public ICommand TransactionsCommand { get; set; }
-        public ICommand ShipmentsCommand { get; set; }
         public ICommand SettingsCommand { get; set; }
-
-        public ICommand FileScanningCommand { get; set; }
+        public ICommand FileScanCommand { get; set; }
 
         private void Home(object obj) => CurrentView = new HomeVM();
-        private void Customer(object obj) => CurrentView = new CustomerVM();
-        private void Product(object obj) => CurrentView = new ProductVM();
-        private void Order(object obj) => CurrentView = new OrderVM();
-        private void Transaction(object obj) => CurrentView = new TransactionVM();
-        private void Shipment(object obj) => CurrentView = new ShipmentVM();
         private void Setting(object obj) => CurrentView = new SettingVM();
-
-        private void FileScanning(object obj) => CurrentView = new FileScanningVM();
+        private void FileScanView(object obj) => CurrentView = new FileScanVM();
 
         public NavigationVM()
         {
             HomeCommand = new RelayCommand(Home);
-            CustomersCommand = new RelayCommand(Customer);
-            ProductsCommand = new RelayCommand(Product);
-            OrdersCommand = new RelayCommand(Order);
-            TransactionsCommand = new RelayCommand(Transaction);
-            ShipmentsCommand = new RelayCommand(Shipment);
             SettingsCommand = new RelayCommand(Setting);
 
-            FileScanningCommand = new RelayCommand(FileScanning);
+            FileScanCommand = new RelayCommand(FileScanView);
 
             // Startup Page
             CurrentView = new HomeVM();

@@ -18,12 +18,12 @@
         <vm:NavigationVM />
     </Window.DataContext>
 
-    <Grid>
+    <Grid  MouseDown="MouseDownEvent">
 
         <Border Background="#212529"
         CornerRadius="20" />
 
-        <Grid MouseDown="MouseDownEvent" >
+        <Grid>
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="228" />
@@ -60,7 +60,7 @@
                     <!--// 文件扫描 //-->
 
                     <Menu:Btn Style="{StaticResource BtnStyle}"
-                  Command="{Binding FileScanningCommand}">
+                  Command="{Binding FileScanCommand}">
 
                         <Grid>
 

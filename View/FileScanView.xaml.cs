@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace VirusDetectionSystem.View
 {
     /// <summary>
-    /// Customers.xaml 的交互逻辑
+    /// FileScanView.xaml 的交互逻辑
     /// </summary>
-    public partial class Customers : UserControl
+    public partial class FileScanView : UserControl
     {
-        public Customers()
+        public FileScanView()
         {
             InitializeComponent();
         }

@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace VirusDetectionSystem.View
 {
     /// <summary>
-    /// Products.xaml 的交互逻辑
+    /// ItemsControl.xaml 的交互逻辑
     /// </summary>
-    public partial class Products : UserControl
+    public partial class ItemsControl : UserControl
     {
-        public Products()
+        public ItemsControl()
         {
             InitializeComponent();
         }
