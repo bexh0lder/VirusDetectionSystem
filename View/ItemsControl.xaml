@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:VirusDetectionSystem.View"
              xmlns:controls="clr-namespace:VirusDetectionSystem.Controls"
              xmlns:converters="clr-namespace:VirusDetectionSystem.Converters"
+             xmlns:vm="clr-namespace:VirusDetectionSystem.ViewModel"
              mc:Ignorable="d"
              Height="40"
              d:DesignWidth="500"
@@ -50,13 +51,20 @@
                    VerticalAlignment="Top"
                    HorizontalAlignment="Center"/>
 
-        <TextBlock Grid.Column="3" Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource FileNameToExtensionConverter}, FallbackValue=FileExtension}"
+        <TextBlock Grid.Column="3" 
            ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
            TextWrapping="NoWrap"
            Foreground="#ffffff"
            TextTrimming="CharacterEllipsis"
            VerticalAlignment="Top"
-           HorizontalAlignment="Center"/>
+           HorizontalAlignment="Center">
+            <TextBlock.Text>
+                <MultiBinding Converter="{StaticResource FileNameToExtensionConverter}">
+                    <Binding Path="FileName" UpdateSourceTrigger="PropertyChanged" />
+                    <Binding Path="FileType" UpdateSourceTrigger="PropertyChanged" />
+                </MultiBinding>
+            </TextBlock.Text>
+        </TextBlock>
 
         <TextBlock Grid.Column="4" Text="{Binding IsScanComplete, UpdateSourceTrigger=PropertyChanged}"
                    Foreground="{Binding IsScanCompleteColor, UpdateSourceTrigger=PropertyChanged}"

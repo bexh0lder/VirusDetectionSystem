@@ -354,7 +354,7 @@ namespace VirusDetectionSystem.ViewModel
                         IsScanComplete = "未扫描",
                         IsSkipScan = false,
                         IsPE = false,
-                        Type = FileType.File
+                        FileType = FileTypeState.File
                     };
 
                     return result;
@@ -380,7 +380,7 @@ namespace VirusDetectionSystem.ViewModel
                         IsSkipScan = false,
                         IsPE = false,
                         FileSizeBytes = long.MaxValue,
-                        Type = FileType.Folder
+                        FileType = FileTypeState.Folder
                     };
 
                     return result;

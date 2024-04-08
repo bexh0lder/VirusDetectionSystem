@@ -63,7 +63,7 @@
                 CornerRadius="8" 
                 BorderBrush="#ffffff"
                 BorderThickness="1"
-                Margin="5,10,5,10">
+                Margin="5,10,5,30">
             <ListBox Background="Transparent"
                      ItemsSource="{Binding FileScanResults, UpdateSourceTrigger=PropertyChanged}"
                      HorizontalContentAlignment="Stretch"

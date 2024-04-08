@@ -9,13 +9,13 @@ using VirusDetectionSystem.Utilities;
 
 namespace VirusDetectionSystem.ViewModel
 {
-    public enum FolderOrFileSate
+    public enum FolderOrFileState
     {
         未扫描,
         已扫描,
         有病毒
     }
-    public enum FileType
+    public enum FileTypeState
     {
         Folder, File
     }
@@ -115,6 +115,11 @@ namespace VirusDetectionSystem.ViewModel
         }
 
         // 文件类型，无需绑定
-        public FileType Type { get; set; }
+        private FileTypeState _fileType;
+        public FileTypeState FileType
+        {
+            get { return _fileType; }
+            set { _fileType = value; OnPropertyChanged(); }
+        }
     }
 }
