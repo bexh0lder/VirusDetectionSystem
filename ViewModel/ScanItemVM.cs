@@ -23,7 +23,7 @@ namespace VirusDetectionSystem.ViewModel
     {
         public ScanItemVM() 
         {
-            FileHashList = new List<String>();
+            //FileHashList = new List<String>();
         }
 
         // ICON（图标）转换成照片
@@ -34,21 +34,47 @@ namespace VirusDetectionSystem.ViewModel
             set { _Iconimage = value; OnPropertyChanged(); }
         }
 
-        // 文件哈希值
-        private string _fileHash;
-        public string FileHash
+        // 文件MD5哈希值
+        private string _fileHashMD5;
+        public string FileHashMD5
         {
-            get { return _fileHash; }
-            set { _fileHash = value; OnPropertyChanged(); }
+            get { return _fileHashMD5; }
+            set { _fileHashMD5 = value; OnPropertyChanged(); }
         }
 
-        // 文件哈希值列表
-        private List<string> _fileHashList;
-        public List<string> FileHashList
+        // 文件SHA1哈希值
+        private string _fileHashSHA1;
+
+        public string FileHashSHA1
         {
-            get { return _fileHashList; }
-            set { _fileHashList = value; OnPropertyChanged(); }
+            get { return _fileHashSHA1; }
+            set { _fileHashSHA1 = value; }
         }
+        // 文件SHA256哈希值
+        private string _fileHashSHA256;
+
+        public string FileHashSHA256
+        {
+            get { return _fileHashSHA256; }
+            set { _fileHashSHA256 = value; }
+        }
+
+        // 文件CRC32校验值
+        private string _fileHashCRC32;
+
+        public string FileHashCRC32
+        {
+            get { return _fileHashCRC32; }
+            set { _fileHashCRC32 = value; }
+        }
+
+        //// 文件哈希值列表
+        //private List<string> _fileHashList;
+        //public List<string> FileHashList
+        //{
+        //    get { return _fileHashList; }
+        //    set { _fileHashList = value; OnPropertyChanged(); }
+        //}
 
         // 文件名
         private string _fileName;

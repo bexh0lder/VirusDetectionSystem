@@ -354,7 +354,11 @@ namespace VirusDetectionSystem.ViewModel
                         IsScanComplete = "未扫描",
                         IsSkipScan = false,
                         IsPE = false,
-                        FileType = FileTypeState.File
+                        FileType = FileTypeState.File,
+                        FileHashMD5 = HashHelper.ComputeMD5(path),
+                        FileHashCRC32 = HashHelper.ComputeCRC32(path),
+                        FileHashSHA1 = HashHelper.ComputeSHA1(path),
+                        FileHashSHA256 = HashHelper.ComputeSHA256(path)
                     };
 
                     return result;

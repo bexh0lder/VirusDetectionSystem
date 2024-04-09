@@ -50,7 +50,7 @@
                             <Image Source="Images/img_home.png"
                        Style="{StaticResource Image_Style}" />
 
-                            <TextBlock Text="Home"
+                            <TextBlock Text="主页"
                            Style="{StaticResource Text_Style}" />
 
                         </Grid>
@@ -84,7 +84,7 @@
                             <Image Source="Images/img_product.png"
                        Style="{StaticResource Image_Style}" />
 
-                            <TextBlock Text="Products"
+                            <TextBlock Text="PE文件分析"
                            Style="{StaticResource Text_Style}" />
 
                         </Grid>
@@ -101,7 +101,7 @@
                             <Image Source="Images/img_order.png"
                        Style="{StaticResource Image_Style}" />
 
-                            <TextBlock Text="Orders"
+                            <TextBlock Text="病毒库"
                            Style="{StaticResource Text_Style}" />
 
                         </Grid>
@@ -118,7 +118,7 @@
                             <Image Source="Images/img_transaction.png"
                        Style="{StaticResource Image_Style}" />
 
-                            <TextBlock Text="Transactions"
+                            <TextBlock Text="文件白名单"
                            Style="{StaticResource Text_Style}" />
 
                         </Grid>
@@ -135,7 +135,7 @@
                             <Image Source="Images/img_shipment.png"
                        Style="{StaticResource Image_Style}" />
 
-                            <TextBlock Text="Shipments"
+                            <TextBlock Text="十六进制编辑"
                            Style="{StaticResource Text_Style}" />
 
                         </Grid>

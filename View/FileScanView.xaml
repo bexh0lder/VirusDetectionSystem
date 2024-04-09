@@ -7,6 +7,7 @@
              xmlns:vm="clr-namespace:VirusDetectionSystem.ViewModel"
              xmlns:card="clr-namespace:VirusDetectionSystem.View"
              mc:Ignorable="d" 
+             x:Name="Window"
              d:DesignHeight="600"
              d:DesignWidth="622"
              Style="{StaticResource Page_Style}">
@@ -15,98 +16,193 @@
     </UserControl.DataContext>
     <Grid Margin="10 30 10 0">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="80"/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+        <Border x:Name="FileScanWindow">
+            <Border.RenderTransform>
+                <TranslateTransform X="0" />
+            </Border.RenderTransform>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" FontSize="45" Foreground="#d1d1d2">File Scasssn</Label>
+                <Label Grid.Row="0" FontSize="45" Foreground="#d1d1d2">File Scan</Label>
 
-        <!-- 操作栏 -->
-        <Grid Grid.Row="1" VerticalAlignment="Bottom">
+                <!-- 操作栏 -->
+                <Grid Grid.Row="1" VerticalAlignment="Bottom">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="90"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="90"/>
-                <ColumnDefinition Width="90"/>
-            </Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="90"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="90"/>
+                        <ColumnDefinition Width="90"/>
+                    </Grid.ColumnDefinitions>
 
-            <Label Foreground="#ffffff" Content="扫描路径：" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-            
-            <Border Grid.Column="1" CornerRadius="8" Background="White" Margin="0,0,5,0" BorderBrush="Black" BorderThickness="1" VerticalAlignment="Top" Height="35">
-                <TextBox Text="{Binding ScanPath, UpdateSourceTrigger=PropertyChanged}" TextWrapping="NoWrap" FontSize="16" Padding="5" Background="Transparent" BorderThickness="0"/>
-            </Border>
-            
-            <!-- 选择扫描路径 -->
-            <Button Grid.Column="2" 
-                    Command="{Binding SelectScanPathCommand}"
-                    Style="{StaticResource BoxBtnStyle}"
-                    Content="浏览"
-                    VerticalAlignment="Top"
-                    Width="80" 
-                    Height="35"/>
-            <Button Grid.Column="3"
-                    Command="{Binding VirusDetectCommand}"
-                    Style="{StaticResource BoxBtnStyle}"
-                    Content="检测"
-                    VerticalAlignment="Top"
-                    Width="80" 
-                    Height="35"/>
-        </Grid>
+                    <Label Foreground="#ffffff" Content="扫描路径：" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
-        <!-- 扫描信息栏 -->
+                    <Border Grid.Column="1" CornerRadius="8" Background="White" Margin="0,0,5,0" BorderBrush="Black" BorderThickness="1" VerticalAlignment="Top" Height="35">
+                        <TextBox IsReadOnly="True" Text="{Binding ScanPath, UpdateSourceTrigger=PropertyChanged}" TextWrapping="NoWrap" FontSize="16" Padding="5" Background="Transparent" BorderThickness="0"/>
+                    </Border>
 
-        <Border Grid.Row="2"  
-                Background="#212529" 
-                CornerRadius="8" 
-                BorderBrush="#ffffff"
-                BorderThickness="1"
-                Margin="5,10,5,30">
-            <ListBox Background="Transparent"
-                     ItemsSource="{Binding FileScanResults, UpdateSourceTrigger=PropertyChanged}"
-                     HorizontalContentAlignment="Stretch"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     BorderBrush="Transparent" 
-                     BorderThickness="0">
-                <ListBox.Template>
-                    <ControlTemplate>
-                        <Border Padding="4">
-                            <DockPanel LastChildFill="True">
-                                <Grid DockPanel.Dock="Top"
-                                      Height="30">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="240"></ColumnDefinition>
-                                        <ColumnDefinition Width="80"></ColumnDefinition>
-                                        <ColumnDefinition Width="80"></ColumnDefinition>
-                                        <ColumnDefinition Width="80"></ColumnDefinition>
-                                        <ColumnDefinition Width="*"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-                                    <Label Grid.Column="0"
-                                           Style="{StaticResource Data_Style}">文件名</Label>
-                                    <Label Grid.Column="1"
-                                           Style="{StaticResource Data_Style}">文件大小</Label>
-                                    <Label Grid.Column="2"
-                                           Style="{StaticResource Data_Style}">文件后缀</Label>
-                                    <Label Grid.Column="3"
-                                           Style="{StaticResource Data_Style}">状态</Label>
-                                    <Label Grid.Column="4"
-                                           Style="{StaticResource Data_Style}">是否跳过检测</Label>
-                                </Grid>
-                                <ScrollViewer Focusable="False">
-                                    <ItemsPresenter></ItemsPresenter>
-                                </ScrollViewer>
-                            </DockPanel>
-                        </Border>
-                    </ControlTemplate>
-                </ListBox.Template>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <card:ItemsControl DataContext="{Binding}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+                    <!-- 选择扫描路径 -->
+                    <Button Grid.Column="2" 
+        Command="{Binding SelectScanPathCommand}"
+        Style="{StaticResource BoxBtnStyle}"
+        Content="浏览"
+        VerticalAlignment="Top"
+        Width="80" 
+        Height="35"/>
+                    <Button Grid.Column="3"
+        Command="{Binding VirusDetectCommand}"
+        Style="{StaticResource BoxBtnStyle}"
+        Content="检测"
+        VerticalAlignment="Top"
+        Width="80" 
+        Height="35"/>
+                </Grid>
+
+                <!-- 扫描信息栏 -->
+
+                <Border Grid.Row="2"  
+                        Background="#212529" 
+                        CornerRadius="8" 
+                        BorderBrush="#ffffff"
+                        BorderThickness="1"
+                        Margin="5,10,5,30">
+                    <ListBox Background="Transparent"
+                             MouseDoubleClick="ItemInfoPageMove_Click"
+                             ItemsSource="{Binding FileScanResults, UpdateSourceTrigger=PropertyChanged}"
+                             HorizontalContentAlignment="Stretch"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             BorderBrush="Transparent" 
+                             BorderThickness="0">
+                        <ListBox.Template>
+                            <ControlTemplate>
+                                <Border Padding="4">
+                                    <DockPanel LastChildFill="True">
+                                        <Grid DockPanel.Dock="Top"
+                          Height="30">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="240"></ColumnDefinition>
+                                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                                <ColumnDefinition Width="80"></ColumnDefinition>
+                                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Label Grid.Column="0"
+                               Style="{StaticResource Data_Style}">文件名</Label>
+                                            <Label Grid.Column="1"
+                               Style="{StaticResource Data_Style}">文件大小</Label>
+                                            <Label Grid.Column="2"
+                               Style="{StaticResource Data_Style}">文件后缀</Label>
+                                            <Label Grid.Column="3"
+                               Style="{StaticResource Data_Style}">状态</Label>
+                                            <Label Grid.Column="4"
+                               Style="{StaticResource Data_Style}">是否跳过检测</Label>
+                                        </Grid>
+                                        <ScrollViewer Focusable="False">
+                                            <ItemsPresenter></ItemsPresenter>
+                                        </ScrollViewer>
+                                    </DockPanel>
+                                </Border>
+                            </ControlTemplate>
+                        </ListBox.Template>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <card:ItemsControl DataContext="{Binding}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
+            </Grid>
+        </Border>
+        
+        <Border x:Name="FileHashWindow"> 
+            <Border.RenderTransform>
+                <TranslateTransform X="{Binding ElementName=Window,Path=ActualWidth}" />
+            </Border.RenderTransform>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="100"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" FontSize="45" Foreground="#d1d1d2">File Info</Label>
+                <Button Grid.Row="1" 
+                        Click="FileHashWindowReturn_Click"
+                        Style="{StaticResource BoxBtnStyle}"
+                        Content="返回"
+                        Margin="0 0 30 0"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right"
+                        Width="80"
+                        Height="35">
+                </Button>
+
+                <Image Grid.Row="1"
+                       x:Name="FileIconImage"
+                       Margin="20 0 20 0"
+                       HorizontalAlignment="Left"
+                       Width="40"
+                       Height="40" />
+                <TextBlock Grid.Row="1" 
+                           x:Name="FileNameTextBlock"
+                           VerticalAlignment="Center"
+                           Margin="100 0 30 0"
+                           HorizontalAlignment="Left"
+                           Foreground="#ffffff"
+                           FontSize="15"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis" />
+                <Border Grid.Row="2"  
+                        Background="#212529" 
+                        CornerRadius="8" 
+                        BorderBrush="#ffffff"
+                        BorderThickness="1"
+                        Margin="5,20,5,20">
+                    <Grid ShowGridLines="True">
+                        <Grid.ColumnDefinitions >
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="9*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="3*"/>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ffffff">类型</Label>
+                        <Label Grid.Row="0" Grid.Column="1" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ffffff">值</Label>
+                        <Label Grid.Row="1" Grid.Column="0" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ffffff">MD5</Label>
+                        <Label Grid.Row="2" Grid.Column="0" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ffffff">SHA1</Label>
+                        <Label Grid.Row="3" Grid.Column="0" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ffffff">SHA256</Label>
+                        <Label Grid.Row="4" Grid.Column="0" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ffffff">CRC32</Label>
+                        <Label Grid.Row="5" Grid.Column="0" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ffffff">文件大小</Label>
+                        <Label Grid.Row="6" Grid.Column="0" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ffffff">文件路径</Label>
+
+                        <TextBlock Grid.Row="1" x:Name="FileHashMD5TextBlock" Margin="5,0,0,0" Grid.Column="1" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#ffffff"/>
+                        <TextBlock Grid.Row="2" x:Name="FileHashSHA1TextBlock" Margin="5,0,0,0" Grid.Column="1" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#ffffff"/>
+                        <TextBlock Grid.Row="3" x:Name="FileHashSHA256TextBlock" Margin="5,0,0,0" Grid.Column="1" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#ffffff"/>
+                        <TextBlock Grid.Row="4" x:Name="FileCRC32TextBlock" Margin="5,0,0,0" Grid.Column="1" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#ffffff"/>
+                        <TextBlock Grid.Row="5" x:Name="FileSizeBytesTextBlock" Margin="5,0,0,0" Grid.Column="1" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#ffffff"/>
+                        <TextBlock Grid.Row="6" x:Name="FilePathTextBlock" Margin="5,0,0,0" Grid.Column="1" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#ffffff"/>
+                    </Grid>
+                </Border>
+                <Button Grid.Row="3" 
+                        Click="SearchVirusTotalWeb_Click"
+                        Style="{StaticResource BoxBtnStyle}"
+                        Content="查询VirusTotal"
+                        Margin="0 0 0 20"
+                        HorizontalAlignment="Center"
+                        Width="200"
+                        Height="50">
+                </Button>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

@@ -32,7 +32,6 @@ namespace VirusDetectionSystem.ViewModel
         {
             HomeCommand = new RelayCommand(Home);
             SettingsCommand = new RelayCommand(Setting);
-
             FileScanCommand = new RelayCommand(FileScanView);
 
             // Startup Page
