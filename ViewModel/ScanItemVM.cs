@@ -108,20 +108,20 @@ namespace VirusDetectionSystem.ViewModel
             set { _selection = value; OnPropertyChanged(); }
         }
 
-        // 检测结果（未扫描、已扫描、有病毒）
-        private string _isScanComplete;
-        public string IsScanComplete
+        // 检测结果
+        private string _detectResult;
+        public string DetectResult
         {
-            get { return _isScanComplete; }
-            set { _isScanComplete = value; OnPropertyChanged(); }
+            get { return _detectResult; }
+            set { _detectResult = value; OnPropertyChanged(); }
         }
 
         // 检测结果字体颜色
-        private System.Windows.Media.Brush _isScanCompleteColor;
-        public System.Windows.Media.Brush IsScanCompleteColor
+        private System.Windows.Media.Brush _detectResultColor;
+        public System.Windows.Media.Brush DetectResultColor
         {
-            get { return _isScanCompleteColor; }
-            set { _isScanCompleteColor = value; OnPropertyChanged(); }
+            get { return _detectResultColor; }
+            set { _detectResultColor = value; OnPropertyChanged(); }
         }
 
         // 是否跳过扫描

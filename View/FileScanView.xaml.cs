@@ -177,6 +177,11 @@ namespace VirusDetectionSystem.View
             sb.Begin();//播放此动画
         }
 
+        /// <summary>
+        /// 双击打开文件详情
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SearchVirusTotalWeb_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(FileHashMD5TextBlock.Text))
@@ -188,5 +193,20 @@ namespace VirusDetectionSystem.View
                 MessageBox.Show("哈希值为空");
             }
         }
+
+        //private void Button_MouseDown(object sender, MouseButtonEventArgs e)
+        //{
+        //    // 进度条测试
+        //    Thread thread = new Thread(new ThreadStart(() =>
+        //    {
+        //        for (int i = 0; i <= 100; i++)
+        //        {
+        //            this.DetectProgressBar.Dispatcher.BeginInvoke((ThreadStart)delegate { this.DetectProgressBar.Value = i; });
+        //            Thread.Sleep(100);
+        //        }
+
+        //    }));
+        //    thread.Start();
+        //}
     }
 }

@@ -39,12 +39,12 @@ namespace VirusDetectionSystem.Utilities
                 }//结束计算
                 else
                 {
-                    hashMD5 = "文件不存在";
+                    hashMD5 = "404";
                 }
             }
             catch (Exception ex)
             {
-                hashMD5 = ex.Message;
+                hashMD5 = "404";
             }
             return hashMD5;
         }

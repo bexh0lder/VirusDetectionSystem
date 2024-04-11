@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace VirusDetectionSystem.View
 {
     /// <summary>
-    /// PEInfoView.xaml 的交互逻辑
+    /// PEFileAnalysisView.xaml 的交互逻辑
     /// </summary>
-    public partial class PEInfoView : UserControl
+    public partial class PEFileAnalysisView : UserControl
     {
-        public PEInfoView()
+        public PEFileAnalysisView()
         {
             InitializeComponent();
         }

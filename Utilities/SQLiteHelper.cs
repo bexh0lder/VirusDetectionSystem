@@ -11,59 +11,17 @@ using System.IO;
 namespace VirusDetectionSystem.Utilities
 {
     public class SQLiteHelper
-    {   /// <summary>
-        /// 数据库名称
-        /// </summary>
-        private string _dbName = "Data.db";
+    {
+        //连接对象
+        private SQLiteConnection SQLiteConn = null;
 
-        /// <summary>
-        /// 表名称
-        /// </summary>
-        private string _tableName = "SweepRecord";
+        private string FilePath = string.Empty;
 
-        private string VirusDB = "VirusSample";
+        //连接字符串
+        private string SQLiteConnString = string.Empty;
 
-        /// <summary>
-        /// 数据库路径
-        /// </summary>
-        private string filePath = "";
-
-        /// <summary>
-        /// 连接对象
-        /// </summary>
-        private SQLiteConnection _SQLiteConn = null;
-
-        /// <summary>
-        /// 事务对象
-        /// </summary>
-        private SQLiteTransaction _SQLiteTrans = null;
-
-        /// <summary>
-        /// 事务运行标识
-        /// </summary>
-        private bool _IsRunTrans = false;
-
-        /// <summary>
-        /// 事务自动提交标识
-        /// </summary>
-        private bool _AutoCommit = false;
-
-        /// <summary>
-        /// 连接字符串
-        /// </summary>
-        private string _SQLiteConnString = null; 
-
-        public string SQLiteConnString
-        {
-            set { this._SQLiteConnString = value; }
-            get { return this._SQLiteConnString; }
-        }
-
-        /// <summary>
-        /// 单例化
-        /// </summary>
+        //单例化
         private static SQLiteHelper instance = null;
-
         public static SQLiteHelper Instance
         {
             get
@@ -79,248 +37,382 @@ namespace VirusDetectionSystem.Utilities
         public SQLiteHelper()
         {
 
-            this._SQLiteConnString = $"Data Source={Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\\{_dbName}";
+            SQLiteConnString = $"Data Source={SQLiteGlobalName.DbPath}\\{SQLiteGlobalName.DbName}";
 
-            this.filePath = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\\{_dbName}";
+            FilePath = $"{SQLiteGlobalName.DbPath}\\{SQLiteGlobalName.DbName}";
 
-            if (CheckDbIsExist())//数据库存在
-            {
-                NewTable(this._SQLiteConnString, _tableName);//新建数据表
-
-                NewTable(this._SQLiteConnString, VirusDB);
-            }
-            else
-            {
-                return;
-            }
-
+            //初始化数据库
+            InitializedDB();
         }
 
         /// <summary>
-        /// 检测库是否存在
+        /// 初始化数据库
         /// </summary>
-        /// 要检查数据库是否存在，我们可以使用SQL语句来查询系统表sqlite_master。sqlite_master表是SQLite数据库系统中的一个系统表，
-        /// 它包含了数据库中所有表的信息。我们可以通过查询sqlite_master表中的特定表名来判断数据库是否存在。
-        public bool CheckDbIsExist()
+        private void InitializedDB()
         {
             try
             {
-                OpenDb();
-
-                SQLiteCommand DbCmd = new SQLiteCommand();
-
-                DbCmd.Connection = _SQLiteConn;
-
-                DbCmd.CommandText = $"SELECT COUNT(*) FROM sqlite_master where type='table' and name='{_tableName}';";//是否存在扫描记录
-
-                if (0 == Convert.ToInt32(DbCmd.ExecuteScalar()))//数据库存在
+                // 创建SQLite连接对象
+                using (SQLiteConn = new SQLiteConnection(SQLiteConnString))
                 {
-                    return true;
-                }
-                else//数据库不存在
-                {
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("打开数据库：" + _dbName + "的连接失败：" + ex.Message);
-            }
-            finally
-            {
-                this._SQLiteConn.Close();
-            }
-        }
-        /// <summary>
-        /// 创建表
-        /// </summary>
-        /// <param name="dbPath">指定数据库文件</param>
-        /// <param name="tableName">表名称</param>
-        public void NewTable(string dbPath, string tableName)
-        {
-            if (_SQLiteConn.State != System.Data.ConnectionState.Open)
-            {
-                OpenDb();
-            }
+                    SQLiteConn.Open();
 
-            SQLiteCommand cmd = new SQLiteCommand();
-            cmd.Connection = _SQLiteConn;
-
-            if (tableName == "VirusSample")
-            {
-                cmd.CommandText = $"CREATE TABLE {tableName}(SampleName varchar)";
-            }
-            else
-            {
-                cmd.CommandText = $"CREATE TABLE {tableName}(Time varchar,FileName varchar,FilePath varchar,Type varchar)";
-            }
-
-            cmd.ExecuteNonQuery();
-
-            CloseDb();
-        }
-
-        /// <summary>
-        /// 查询{_tableName}表数据
-        /// </summary>
-        public DataTable GetDataTable(string type)
-        {
-            try
-            {
-                string sql = $"Select * from {_tableName} where type='{type}' order by Time desc LIMIT 10";
-
-                using (SQLiteConnection con = new SQLiteConnection(SQLiteConnString))
-                {
-                    using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
+                    //操作
+                    using (SQLiteCommand command = new SQLiteCommand(SQLiteConn))
                     {
-                        con.Open();
-                        SQLiteDataAdapter ad = new SQLiteDataAdapter(cmd);
-                        DataTable tb = new DataTable();
-                        ad.Fill(tb);
-                        cmd.Dispose();
-                        con.Close();
-                        con.Dispose();
-                        return tb;
+                        //假若数据库不存在，创建数据库
+                        if (!File.Exists(FilePath))
+                        {
+                            CreateDB();
+                        }
 
+                        //扫描记录表是否存在
+                        command.CommandText = SQLiteDDL.CT_ScanRecord;
+
+                        // 执行
+                        command.ExecuteNonQuery();
+
+                        // 病毒库表是否存在
+                        command.CommandText = SQLiteDDL.CT_VirusSample;
+
+                        // 执行
+                        command.ExecuteNonQuery();
+
+                        //白名单表是否存在
+                        command.CommandText = SQLiteDDL.CT_FileWhiteList;
+
+                        // 执行
+                        command.ExecuteNonQuery();
                     }
+
+                    SQLiteConn.Close();
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception($"查询表：SweepRecord失败：" + ex.Message);
-                return null;
+                throw new Exception($"初始化数据库失败:{ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 创建数据库
+        /// </summary>
+        /// <exception cref="Exception"></exception>
+        private void CreateDB()
+        {
+            try
+            {
+                SQLiteConnection.CreateFile(FilePath);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"创建数据库失败:{ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 查询病毒扫描记录表数据
+        /// </summary>
+        public DataTable GetScanVirusData()
+        {
+            try
+            {
+                using (SQLiteConn = new SQLiteConnection(SQLiteConnString))
+                {
+                    SQLiteConn.Open();
+
+                    DataTable tb = new DataTable();
+
+                    using (SQLiteCommand cmd = new SQLiteCommand(SQLiteConn))
+                    {
+                        cmd.CommandText = SQLiteDQL.ScanVirusData;
+
+                        using (SQLiteDataAdapter ad = new SQLiteDataAdapter(cmd))
+                        {
+                            ad.Fill(tb);
+                        }
+                    }
+
+                    SQLiteConn.Close();
+
+                    return tb;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"查询病毒扫描记录表数据失败:{ex.Message}");
 
             }
         }
 
-        public int DetectVirus(string sample)
+        /// <summary>
+        /// 查询病毒样本表数据
+        /// </summary>
+        public DataTable GetVirusSampleData()
         {
             try
             {
-                string sql = $"SELECT * FROM {VirusDB} WHERE SampleName = '{sample}';";
-
-                if (_SQLiteConn.State != System.Data.ConnectionState.Open)
+                using (SQLiteConn = new SQLiteConnection(SQLiteConnString))
                 {
-                    OpenDb();
+                    SQLiteConn.Open();
+
+                    DataTable tb = new DataTable();
+
+                    using (SQLiteCommand cmd = new SQLiteCommand(SQLiteConn))
+                    {
+                        cmd.CommandText = SQLiteDQL.VirusSampleData;
+
+                        using (SQLiteDataAdapter ad = new SQLiteDataAdapter(cmd))
+                        {
+                            ad.Fill(tb);
+                        }
+                    }
+
+                    SQLiteConn.Close();
+
+                    return tb;
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"查询病毒样本表数据失败:{ex.Message}");
 
-                using (SQLiteCommand cmd = new SQLiteCommand(sql, _SQLiteConn))
+            }
+        }
+
+        /// <summary>
+        /// 按MD5值查询病毒样本表数据,是否存在
+        /// </summary>
+        public int GetVirusSampleDataBySimpleHash(string md5)
+        {
+            try
+            {
+                using (SQLiteConn = new SQLiteConnection(SQLiteConnString))
                 {
+                    SQLiteConn.Open();
 
-                    int result = cmd.ExecuteNonQuery();
+                    int result = 0;
+                    using (SQLiteCommand cmd = new SQLiteCommand(SQLiteConn))
+                    {
+                        //cmd.CommandText = $"{SQLiteDQL.ScanVirusDataByValue}'{md5}';";
+                        cmd.CommandText = $"SELECT * FROM VirusSample WHERE SampleHash = '{md5}'";
+                        //cmd.Parameters.AddWithValue("@value", md5);
+                        using (SQLiteDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                result = 1;
+                            }
+                        }
+                    }
 
-                    CloseDb();
+                    SQLiteConn.Close();
 
                     return result;
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception($"搜索样本病毒库错误：" + ex.Message);
+                throw new Exception($"查询病毒样本表数据失败:{ex.Message}");
+
             }
-        }
-
-        //插入病毒样本数据
-        public void InsertSampleData(string sample)
-        {
-            SQLiteHelper.Instance.OpenDb();
-
-            // 插入数据
-            string commandStr = $"INSERT OR IGNORE INTO VirusSample (SampleName) VALUES (@SampleName)";
-
-            using (SQLiteCommand insertDataCommand = new SQLiteCommand(commandStr, SQLiteHelper.Instance._SQLiteConn))
-            {
-                insertDataCommand.Parameters.AddWithValue("@SampleName", sample); // 设置参数值，避免SQL注入
-
-                insertDataCommand.ExecuteNonQuery(); // 执行插入数据的SQL语句
-            }
-
-            SQLiteHelper.Instance.CloseDb();
-        }
-
-        //插入搜索记录
-        public void InsertData(string time, string fileName, string filePath, string type)
-        {
-            SQLiteHelper.Instance.OpenDb();
-
-            // 插入数据
-            string commandStr = $"insert into SweepRecord(Time,FileName,FilePath,Type) values(@Time,@FileName,@FilePath,@Type)";
-            using (SQLiteCommand insertDataCommand = new SQLiteCommand(commandStr, SQLiteHelper.Instance._SQLiteConn))
-            {
-                insertDataCommand.Parameters.AddWithValue("@Time", time); // 设置参数值，避免SQL注入
-                insertDataCommand.Parameters.AddWithValue("@FileName", fileName); // 设置参数值，避免SQL注入
-                insertDataCommand.Parameters.AddWithValue("@FilePath", filePath); // 设置参数值，避免SQL注入
-                insertDataCommand.Parameters.AddWithValue("@Type", type); // 设置参数值，避免SQL注入
-
-                insertDataCommand.ExecuteNonQuery(); // 执行插入数据的SQL语句
-            }
-
-            SQLiteHelper.Instance.CloseDb();
-
         }
 
         /// <summary>
-        /// 打开当前数据库的连接
+        /// 查询白名单表数据
         /// </summary>
-        /// <returns></returns>
-        public Boolean OpenDb()
+        public DataTable GetFileWhiteListData()
         {
             try
             {
-                this._SQLiteConn = new SQLiteConnection(this._SQLiteConnString);
-                this._SQLiteConn.Open();
-                return true;
+                using (SQLiteConn = new SQLiteConnection(SQLiteConnString))
+                {
+                    SQLiteConn.Open();
+
+                    DataTable tb = new DataTable();
+
+                    using (SQLiteCommand cmd = new SQLiteCommand(SQLiteConn))
+                    {
+                        cmd.CommandText = SQLiteDQL.FileWhiteListData;
+
+                        using (SQLiteDataAdapter ad = new SQLiteDataAdapter(cmd))
+                        {
+                            ad.Fill(tb);
+                        }
+                    }
+
+                    SQLiteConn.Close();
+
+                    return tb;
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception("打开数据库：" + _dbName + "的连接失败：" + ex.Message);
+                throw new Exception($"查询白名单表数据失败:{ex.Message}");
+
             }
         }
 
         /// <summary>
-        /// 关闭数据库连接
+        /// 按文件路径查询白名单表数据,是否存在
         /// </summary>
-        public void CloseDb()
+        public int GetFileWhiteListDataByValue(string filePath)
         {
-            if (this._SQLiteConn != null && this._SQLiteConn.State != ConnectionState.Closed)
+            try
             {
-                if (this._IsRunTrans && this._AutoCommit)
+                using (SQLiteConn = new SQLiteConnection(SQLiteConnString))
                 {
-                    this.Commit();
+                    SQLiteConn.Open();
+
+                    DataTable tb = new DataTable();
+
+                    int result = 0;
+
+                    using (SQLiteCommand cmd = new SQLiteCommand(SQLiteConn))
+                    {
+                        cmd.CommandText = $"{SQLiteDQL.FileWhiteListData};";
+
+                        cmd.Parameters.AddWithValue("@value", filePath);
+
+                        using (SQLiteDataAdapter ad = new SQLiteDataAdapter(cmd))
+                        {
+                            ad.Fill(tb);
+
+                            for (int i = 0; i < tb.Rows.Count; i++)
+                            {
+                                if (filePath == tb.Rows[i][1].ToString())
+                                {
+                                    result = 1;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    SQLiteConn.Close();
+
+                    return result;
                 }
-                this._SQLiteConn.Close();
-                //this._SQLiteConn = null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"查询病毒样本表数据失败:{ex.Message}");
+
             }
         }
 
         /// <summary>
-        /// 开始数据库事务
+        /// 插入病毒样本数据
         /// </summary>
-        public void BeginTransaction()
+        /// <param name="sampleId"></param>
+        /// <param name="sampleName"></param>
+        /// <param name="sampleHash"></param>
+        /// <param name="createdTime"></param>
+        /// <exception cref="Exception"></exception>
+        public void InsertVirusSampleData(string sampleName, string sampleHash, string createdTime)
         {
-            this._SQLiteConn.BeginTransaction();
-            this._IsRunTrans = true;
-        }
-
-        /// <summary>
-        /// 开始数据库事务
-        /// </summary>
-        /// <param name="isoLevel">事务锁级别</param>
-        public void BeginTransaction(IsolationLevel isoLevel)
-        {
-            this._SQLiteConn.BeginTransaction(isoLevel);
-            this._IsRunTrans = true;
-        }
-
-        /// <summary>
-        /// 提交当前挂起的事务
-        /// </summary>
-        public void Commit()
-        {
-            if (this._IsRunTrans)
+            try
             {
-                this._SQLiteTrans.Commit();
-                this._IsRunTrans = false;
+                using (SQLiteConn = new SQLiteConnection(SQLiteConnString))
+                {
+                    SQLiteConn.Open();
+
+                    using (SQLiteCommand command = new SQLiteCommand(SQLiteConn))
+                    {
+                        command.CommandText = SQLiteDML.InsertVirusSampleData;
+
+                        // 设置参数值，避免SQL注入
+                        command.Parameters.AddWithValue("@SampleName", sampleName);
+                        command.Parameters.AddWithValue("@SampleHash", sampleHash);
+                        command.Parameters.AddWithValue("@CreatedTime", createdTime);
+
+                        command.ExecuteNonQuery(); // 执行插入数据的SQL语句
+                    }
+
+                    SQLiteConn.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"插入病毒样本数据失败:{ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 插入扫描病毒搜索记录
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="fileName"></param>
+        /// <param name="filePath"></param>
+        /// <param name="virusCount"></param>
+        /// <param name="type"></param>
+        /// <exception cref="Exception"></exception>
+        public void InsertScanVirusData(string scanPath, string fileCount, string folderCount, string virusCount, string scanTime)
+        {
+            try
+            {
+                using (SQLiteConn = new SQLiteConnection(SQLiteConnString))
+                {
+                    SQLiteConn.Open();
+
+                    using (SQLiteCommand command = new SQLiteCommand(SQLiteConn))
+                    {
+                        command.CommandText = SQLiteDML.InsertScanVirusData;
+
+                        // 设置参数值，避免SQL注入
+                        command.Parameters.AddWithValue("@Path", scanPath);
+                        command.Parameters.AddWithValue("@FiCou", fileCount);
+                        command.Parameters.AddWithValue("@FoCou", folderCount);
+                        command.Parameters.AddWithValue("@ViCou", virusCount);
+                        command.Parameters.AddWithValue("@Time", scanTime);
+
+                        command.ExecuteNonQuery(); // 执行插入数据的SQL语句
+                    }
+
+                    SQLiteConn.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"插入病毒样本数据失败:{ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 插入白名单
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="fileName"></param>
+        /// <param name="filePath"></param>
+        /// <param name="virusCount"></param>
+        /// <param name="type"></param>
+        /// <exception cref="Exception"></exception>
+        public void InsertFileWhiteListData(string File_name, string File_hash, string CreatedTime)
+        {
+            try
+            {
+                using (SQLiteConn = new SQLiteConnection(SQLiteConnString))
+                {
+                    SQLiteConn.Open();
+
+                    using (SQLiteCommand command = new SQLiteCommand(SQLiteConn))
+                    {
+                        command.CommandText = SQLiteDML.InsertFileWhiteListData;
+
+                        // 设置参数值，避免SQL注入
+                        command.Parameters.AddWithValue("@File_name", File_name);
+                        command.Parameters.AddWithValue("@File_hash", File_hash);
+                        command.Parameters.AddWithValue("@CreatedTime", CreatedTime);
+
+                        command.ExecuteNonQuery(); // 执行插入数据的SQL语句
+                    }
+
+                    SQLiteConn.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"插入病毒样本数据失败:{ex.Message}");
             }
         }
     }

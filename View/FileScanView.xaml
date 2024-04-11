@@ -24,13 +24,14 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="80"/>
                     <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <Label Grid.Row="0" FontSize="45" Foreground="#d1d1d2">File Scan</Label>
 
-                <!-- 操作栏 -->
-                <Grid Grid.Row="1" VerticalAlignment="Bottom">
+                <!-- 扫描路径选择 -->
+                <Grid Grid.Row="1" VerticalAlignment="Center">
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="90"/>
@@ -39,7 +40,7 @@
                         <ColumnDefinition Width="90"/>
                     </Grid.ColumnDefinitions>
 
-                    <Label Foreground="#ffffff" Content="扫描路径：" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                    <Label Foreground="#ffffff" Content="扫描路径：" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
                     <Border Grid.Column="1" CornerRadius="8" Background="White" Margin="0,0,5,0" BorderBrush="Black" BorderThickness="1" VerticalAlignment="Top" Height="35">
                         <TextBox IsReadOnly="True" Text="{Binding ScanPath, UpdateSourceTrigger=PropertyChanged}" TextWrapping="NoWrap" FontSize="16" Padding="5" Background="Transparent" BorderThickness="0"/>
@@ -47,24 +48,46 @@
 
                     <!-- 选择扫描路径 -->
                     <Button Grid.Column="2" 
-        Command="{Binding SelectScanPathCommand}"
-        Style="{StaticResource BoxBtnStyle}"
-        Content="浏览"
-        VerticalAlignment="Top"
-        Width="80" 
-        Height="35"/>
+                            Command="{Binding SelectScanPathCommand}"
+                            Style="{StaticResource BoxBtnStyle}"
+                            Content="浏览"
+                            VerticalAlignment="Top"
+                            Width="80" 
+                            Height="35"/>
                     <Button Grid.Column="3"
-        Command="{Binding VirusDetectCommand}"
-        Style="{StaticResource BoxBtnStyle}"
-        Content="检测"
-        VerticalAlignment="Top"
-        Width="80" 
-        Height="35"/>
+                            Command="{Binding FileScanCommand}"
+                            Style="{StaticResource BoxBtnStyle}"
+                            Content="扫描"
+                            Width="80" 
+                            Height="35"/>
                 </Grid>
 
-                <!-- 扫描信息栏 -->
+                <!-- 病毒检测 -->
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="90" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="180" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Foreground="#ffffff" Content="检测进度：" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <ProgressBar 
+                        x:Name="DetectProgressBar" 
+                        Grid.Column="1" 
+                        Height="25" 
+                        Margin="0,0,5,0"
+                        Maximum="{Binding DetectFileCount}"
+                        Value="{Binding DetectProgress}"/>
+                    <Button Grid.Column="2" 
+                            Command="{Binding VirusDetectCommand}"
+                            Style="{StaticResource BoxBtnStyle}"
+                            Content="{Binding VirusDetectButtonContent}"
+                            VerticalAlignment="Center"
+                            Width="135" 
+                            Height="40"/>
+                </Grid>
 
-                <Border Grid.Row="2"  
+                    <!-- 扫描信息栏 -->
+                <Border Grid.Row="3"  
                         Background="#212529" 
                         CornerRadius="8" 
                         BorderBrush="#ffffff"
@@ -97,9 +120,9 @@
                                             <Label Grid.Column="2"
                                Style="{StaticResource Data_Style}">文件后缀</Label>
                                             <Label Grid.Column="3"
-                               Style="{StaticResource Data_Style}">状态</Label>
+                               Style="{StaticResource Data_Style}">检测结果</Label>
                                             <Label Grid.Column="4"
-                               Style="{StaticResource Data_Style}">是否跳过检测</Label>
+                               Style="{StaticResource Data_Style}">白名单</Label>
                                         </Grid>
                                         <ScrollViewer Focusable="False">
                                             <ItemsPresenter></ItemsPresenter>
@@ -147,7 +170,7 @@
                        HorizontalAlignment="Left"
                        Width="40"
                        Height="40" />
-                <TextBlock Grid.Row="1" 
+                <TextBlock Grid.Row="1"
                            x:Name="FileNameTextBlock"
                            VerticalAlignment="Center"
                            Margin="100 0 30 0"
@@ -155,7 +178,8 @@
                            Foreground="#ffffff"
                            FontSize="15"
                            TextWrapping="NoWrap"
-                           TextTrimming="CharacterEllipsis" />
+                           TextTrimming="CharacterEllipsis"
+                           MaxWidth="360"/>
                 <Border Grid.Row="2"  
                         Background="#212529" 
                         CornerRadius="8" 

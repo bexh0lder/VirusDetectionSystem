@@ -23,7 +23,7 @@ namespace VirusDetectionSystem.Model
         /// <summary>
         /// 当前的搜索的文件
         /// </summary>
-        public string? CurrentlySearching { get; set; }
+        public string? CurrentDetect { get; set; }
 
         /// <summary>
         /// 当前的扫描的文件
@@ -31,33 +31,33 @@ namespace VirusDetectionSystem.Model
         public string? CurrentScan { get; set; }
 
         /// <summary>
-        /// 是否正在搜索
-        /// </summary>
-        public bool IsSearching { get; set; }
-
-        /// <summary>
-        /// 能否进行搜索
-        /// </summary>
-        public bool CanSearch { get; set; }
-
-        /// <summary>
-        /// 是否正在扫描（病毒）
+        /// 是否正在扫描
         /// </summary>
         public bool IsScanning { get; set; }
 
         /// <summary>
-        /// 能否进行扫描（病毒）
+        /// 能否进行扫描
         /// </summary>
         public bool CanScan { get; set; }
 
         /// <summary>
-        /// 是否区分大小写
+        /// 是否正在搜索
         /// </summary>
-        public bool CaseSensitive { get; set; }
+        public bool IsDetecting { get; set; }
 
         /// <summary>
-        /// 是否递归扫描
+        /// 能否进行搜索
         /// </summary>
-        public bool SearchRecursive { get; set; }
+        public bool CanDetect { get; set; }
+
+        ///// <summary>
+        ///// 是否区分大小写
+        ///// </summary>
+        //public bool CaseSensitive { get; set; }
+
+        ///// <summary>
+        ///// 是否递归扫描
+        ///// </summary>
+        //public bool SearchRecursive { get; set; }
     }
 }

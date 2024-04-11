@@ -7,10 +7,189 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using static VirusDetectionSystem.Utilities.Header;
+
 namespace VirusDetectionSystem.Utilities
 {
+    /// <summary>
+    /// Header数据
+    /// </summary>
+    public class Header
+    {
+        public enum MachineCode
+        {
+            IMAGE_MACHINE_UNKNOWN = 0,
+            I386 = 0x014c,
+            R3000 = 0x0162,  // MIPS little-endian, 0x160 big-endian
+            R4000 = 0x0166,  // MIPS little-endian
+            R10000 = 0x0168,  // MIPS little-endian
+            WCEMIPSV2 = 0x0169,  // MIPS little-endian WCE v2
+            ALPHA = 0x0184,  // Alpha_AXP
+            SH3 = 0x01a2,  // SH3 little-endian
+            SH3DSP = 0x01a3,
+            SH3E = 0x01a4,  // SH3E little-endian
+            SH4 = 0x01a6,  // SH4 little-endian
+            SH5 = 0x01a8,  // SH5
+            ARM = 0x01c0,  // ARM Little-Endian
+            THUMB = 0x01c2,
+            AM33 = 0x01d3,
+            POWERPC = 0x01F0,  // IBM PowerPC Little-Endian
+            POWERPCFP = 0x01f1,
+            IA64 = 0x0200,  // Intel 64
+            MIPS16 = 0x0266,  // MIPS
+            ALPHA64 = 0x0284,  // ALPHA64
+            MIPSFPU = 0x0366,  // MIPS
+            MIPSFPU16 = 0x0466,  // MIPS
+            TRICORE = 0x0520,  // Infineon
+            CEF = 0x0CEF,
+            EBC = 0x0EBC,  // EFI Byte Code
+            AMD64 = 0x8664,  // AMD64 (K8)
+            M32R = 0x9041,  // M32R little-endian
+            CEE = 0xC0EE
+        }
+        public string TargetMachine { get; set; }
+        public DateTime CompilationTimestamp { get; set; }
+        public string EntryPoint { get; set; }
+        public string ContainedSections { get; set; }
+
+        public override string ToString()
+        {
+            return TargetMachine + " " + CompilationTimestamp + " " + EntryPoint + " " + ContainedSections;
+        }
+    }
+
+    /// <summary>
+    /// Section数据
+    /// </summary>
+    public class Section
+    {
+        public string SectName { get; set; }
+        public string VirtualSize { get; set; }
+        public string VirtualAddress { get; set; }
+        public string SizeOfRawData { get; set; }
+
+        public override string ToString()
+        {
+            return SectName + " " + VirtualSize + " " + VirtualAddress + " " + SizeOfRawData;
+        }
+    }
+
+    /// <summary>
+    /// Import数据
+    /// </summary>
+    public class Import
+    {
+        public string DLLName { get; set; }
+        public List<string> FunctionName { get; set; }
+
+        public Import()
+        {
+            FunctionName = new List<string>();
+        }
+
+        public override string ToString()
+        {
+            string result = DLLName + ":";
+            foreach (string function in FunctionName)
+            {
+                result = result + " " + function;
+            }
+            return result;
+        }
+    }
+
     public class PEHelper
     {
+        #region 便捷取值
+
+        /// <summary>
+        /// 获取Header信息
+        /// </summary>
+        /// <returns></returns>
+        public Header GetHeader()
+        {
+            // 获取文件的PE信息
+            DataSet ds = GetPETable();
+
+            // 获取PeHeader中NumberOfSections，即节区数量
+            int numberOfSections = int.Parse(ds.Tables[1].Rows[2]["Value10"].ToString());
+
+            // 获取SectionData表
+            DataTable SectionData = ds.Tables[4];
+
+            Header header = new Header()
+            {
+                TargetMachine = MachineCodeToMachine(long.Parse(ds.Tables[1].Rows[1]["Value10"].ToString())),
+                CompilationTimestamp = TimeStampToDateTime(ds.Tables[1].Rows[3]["Value10"].ToString()),
+                EntryPoint = ds.Tables[2].Rows[6]["Value10"].ToString(),
+                ContainedSections = ds.Tables[1].Rows[2]["Value10"].ToString()
+            };
+
+            return header;
+        }
+
+        /// <summary>
+        /// 获取Sections信息
+        /// </summary>
+        /// <returns></returns>
+        public List<Section> GetSections()
+        {
+            // 获取文件的PE信息
+            DataSet ds = GetPETable();
+
+            // 获取PeHeader中NumberOfSections，即节区数量
+            int numberOfSections = int.Parse(ds.Tables[1].Rows[2]["Value10"].ToString());
+
+            // 获取SectionData表
+            DataTable SectionData = ds.Tables[4];
+
+            List<Section> sections = new List<Section>();
+            for (int i = 0; i < numberOfSections; i++)
+            {
+                sections.Add(new Section()
+                {
+                    SectName = SectionData.Rows[i * 10]["ASCII"].ToString(),
+                    VirtualSize = SectionData.Rows[i * 10 + 1]["Value10"].ToString(),
+                    VirtualAddress = SectionData.Rows[i * 10 + 2]["Value10"].ToString(),
+                    SizeOfRawData = SectionData.Rows[i * 10 + 3]["Value10"].ToString(),
+                });
+            }
+
+            return sections;
+        }
+
+        public List<Import> GetImports()
+        {
+            // 获取文件的PE信息
+            DataSet ds = GetPETable();
+
+            // 获取ImportDirectory表
+            DataTable dt = ds.Tables[6];
+
+            List<Import> imports = new List<Import>();
+
+            // 获取Import
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                if (dt.Rows[i]["Name"].ToString() == "DLL-Name")
+                {
+                    Import import = new Import() { DLLName = dt.Rows[i]["ASCII"].ToString() };
+                    for (int j = i + 1; j < dt.Rows.Count; j++)
+                    {
+                        if (dt.Rows[j]["Name"].ToString() == "DLL-Name") break;
+                        if (dt.Rows[j]["Name"].ToString() == "FunctionName")
+                        {
+                            import.FunctionName.Add(dt.Rows[j]["ASCII"].ToString());
+                        }
+                    }
+                    imports.Add(import);
+                }
+            }
+            return imports;
+        }
+        #endregion
+
+
         /// <summary>
         /// 全部文件数据
         /// </summary>
@@ -226,9 +405,9 @@ namespace VirusDetectionSystem.Utilities
                 SectionTable.SectionData Section = new SectionTable.SectionData();
 
                 Loadbyte(ref Section.SectName);
-                Loadbyte(ref Section.VirtualAddress);
-                Loadbyte(ref Section.SizeOfRawDataRVA);
-                Loadbyte(ref Section.SizeOfRawDataSize);
+                Loadbyte(ref Section.VirtualSize);
+                Loadbyte(ref Section.VirualAddress);
+                Loadbyte(ref Section.SizeOfRawData);
                 Loadbyte(ref Section.PointerToRawData);
                 Loadbyte(ref Section.PointerToRelocations);
                 Loadbyte(ref Section.PointerToLinenumbers);
@@ -260,12 +439,12 @@ namespace VirusDetectionSystem.Utilities
             {
                 SectionTable.SectionData Sect = (SectionTable.SectionData)_SectionTable.Section[i];
 
-                long StarRva = GetLong(Sect.SizeOfRawDataRVA);
-                long EndRva = GetLong(Sect.SizeOfRawDataSize);
+                long StarRva = GetLong(Sect.VirualAddress);
+                long EndRva = GetLong(Sect.SizeOfRawData);
 
                 if (ExporAddress >= StarRva && ExporAddress < StarRva + EndRva)
                 {
-                    PEFileIndex = ExporAddress - GetLong(Sect.SizeOfRawDataRVA) + GetLong(Sect.PointerToRawData);
+                    PEFileIndex = ExporAddress - GetLong(Sect.VirualAddress) + GetLong(Sect.PointerToRawData);
 
                     _ExportDirectory.FileStarIndex = PEFileIndex;
                     _ExportDirectory.FileEndIndex = PEFileIndex + GetLong(ExporRVA.DirSize);
@@ -283,10 +462,10 @@ namespace VirusDetectionSystem.Utilities
                     Loadbyte(ref _ExportDirectory.AddressOfNameOrdinals);
 
                     PEFileIndex = GetLong(_ExportDirectory.AddressOfFunctions) -
-                        GetLong(Sect.SizeOfRawDataRVA) + GetLong(Sect.PointerToRawData);
+                        GetLong(Sect.VirualAddress) + GetLong(Sect.PointerToRawData);
 
                     long EndIndex = GetLong(_ExportDirectory.AddressOfNames) -
-                        GetLong(Sect.SizeOfRawDataRVA) + GetLong(Sect.PointerToRawData);
+                        GetLong(Sect.VirualAddress) + GetLong(Sect.PointerToRawData);
 
                     long Numb = (EndIndex - PEFileIndex) / 4;
                     for (long z = 0; z != Numb; z++)
@@ -302,7 +481,7 @@ namespace VirusDetectionSystem.Utilities
                     PEFileIndex = EndIndex;
 
                     EndIndex = GetLong(_ExportDirectory.AddressOfNameOrdinals) -
-                        GetLong(Sect.SizeOfRawDataRVA) + GetLong(Sect.PointerToRawData);
+                        GetLong(Sect.VirualAddress) + GetLong(Sect.PointerToRawData);
                     Numb = (EndIndex - PEFileIndex) / 4;
 
                     for (long z = 0; z != Numb; z++)
@@ -317,7 +496,7 @@ namespace VirusDetectionSystem.Utilities
                     Numb = 0;
                     PEFileIndex = EndIndex;
                     EndIndex = GetLong(_ExportDirectory.Name) -
-                        GetLong(Sect.SizeOfRawDataRVA) + GetLong(Sect.PointerToRawData);
+                        GetLong(Sect.VirualAddress) + GetLong(Sect.PointerToRawData);
                     Numb = (EndIndex - PEFileIndex) / 2;
 
                     for (long z = 0; z != Numb; z++)
@@ -383,12 +562,12 @@ namespace VirusDetectionSystem.Utilities
             {
                 SectionTable.SectionData Sect = (SectionTable.SectionData)_SectionTable.Section[i];
 
-                StarRva = GetLong(Sect.SizeOfRawDataRVA);
-                EndRva = GetLong(Sect.SizeOfRawDataSize);
+                StarRva = GetLong(Sect.VirualAddress);
+                EndRva = GetLong(Sect.SizeOfRawData);
 
                 if (ImporAddress >= StarRva && ImporAddress < StarRva + EndRva)
                 {
-                    SizeRva = GetLong(Sect.SizeOfRawDataRVA);
+                    SizeRva = GetLong(Sect.VirualAddress);
                     PointerRva = GetLong(Sect.PointerToRawData);
                     PEFileIndex = ImporAddress - SizeRva + PointerRva;
 
@@ -524,12 +703,12 @@ namespace VirusDetectionSystem.Utilities
             {
                 SectionTable.SectionData Sect = (SectionTable.SectionData)_SectionTable.Section[i];
 
-                StarRva = GetLong(Sect.SizeOfRawDataRVA);
-                EndRva = GetLong(Sect.SizeOfRawDataSize);
+                StarRva = GetLong(Sect.VirualAddress);
+                EndRva = GetLong(Sect.SizeOfRawData);
 
                 if (ImporAddress >= StarRva && ImporAddress < StarRva + EndRva)
                 {
-                    SizeRva = GetLong(Sect.SizeOfRawDataRVA);
+                    SizeRva = GetLong(Sect.VirualAddress);
                     PointerRva = GetLong(Sect.PointerToRawData);
                     PEFileIndex = ImporAddress - SizeRva + PointerRva;
                     PEIndex = PEFileIndex;
@@ -722,7 +901,7 @@ namespace VirusDetectionSystem.Utilities
             public byte[] Header = new byte[4];  //PE文件标记
             public byte[] Machine = new byte[2];//该文件运行所要求的CPU。对于Intel平台，该值是IMAGE_FILE_MACHINE_I386 (14Ch)。我们尝试了LUEVELSMEYER的pe.txt声明的14Dh和14Eh，但Windows不能正确执行。看起来，除了禁止程序执行之外，本域对我们来说用处不大。 
             public byte[] NumberOfSections = new byte[2];//文件的节数目。如果我们要在文件中增加或删除一个节，就需要修改这个值。 
-            public byte[] TimeDateStamp = new byte[4];//文件创建日期和时间。我们不感兴趣。 
+            public byte[] TimeDateStamp = new byte[4];//文件创建日期和时间。 
             public byte[] PointerToSymbolTable = new byte[4];//用于调试。 
             public byte[] NumberOfSymbols = new byte[4];//用于调试。 
             public byte[] SizeOfOptionalHeader = new byte[2];//指示紧随本结构之后的 OptionalHeader 结构大小，必须为有效值。 
@@ -799,9 +978,9 @@ namespace VirusDetectionSystem.Utilities
             public class SectionData
             {
                 public byte[] SectName = new byte[8];   //名字
-                public byte[] VirtualAddress = new byte[4]; //虚拟内存地址
-                public byte[] SizeOfRawDataRVA = new byte[4]; //RVA偏移
-                public byte[] SizeOfRawDataSize = new byte[4]; //RVA大小
+                public byte[] VirtualSize = new byte[4]; //虚拟内存地址
+                public byte[] VirualAddress = new byte[4]; //RVA偏移
+                public byte[] SizeOfRawData = new byte[4]; //RVA大小
                 public byte[] PointerToRawData = new byte[4]; //指向RAW数据
                 public byte[] PointerToRelocations = new byte[4]; //指向定位号
                 public byte[] PointerToLinenumbers = new byte[4]; //指向行数
@@ -1039,13 +1218,37 @@ namespace VirusDetectionSystem.Utilities
         private void AddTableRow(DataTable RefTable, byte[] Data, string Name, string Describe)
         {
             RefTable.Rows.Add(new string[]{
-             Name,
-             Data.Length.ToString(),
-             GetString(Data),
-             GetLong(Data).ToString(),
-             GetString(Data,"ASCII"),
-             Describe
-            });
+         Name,
+         Data.Length.ToString(),
+         GetString(Data),
+         GetLong(Data).ToString(),
+         GetString(Data,"ASCII"),
+         Describe
+        });
+        }
+
+        /// <summary>
+        /// MachineCode转Machine
+        /// </summary>
+        /// <param name="timeStamp"></param>
+        /// <returns></returns>
+        private static string MachineCodeToMachine(long machineCode)
+        {
+            return Enum.GetName(typeof(MachineCode), (MachineCode)machineCode);
+        }
+
+        /// <summary>
+        /// 时间戳Timestamp转换成日期
+        /// </summary>
+        /// <param name="timeStamp"></param>
+        /// <returns></returns>
+        private static DateTime TimeStampToDateTime(string timeStamp)
+        {
+            DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+            long lTime = long.Parse(timeStamp + "0000000");
+            TimeSpan toNow = new TimeSpan(lTime);
+            DateTime targetDt = dtStart.Add(toNow);
+            return dtStart.Add(toNow);
         }
         #endregion
 
@@ -1241,10 +1444,10 @@ namespace VirusDetectionSystem.Utilities
             {
                 SectionTable.SectionData SectionDate = (SectionTable.SectionData)_SectionTable.Section[i];
 
-                AddTableRow(ReturnTable, SectionDate.SectName, "SectName", "名字");
-                AddTableRow(ReturnTable, SectionDate.VirtualAddress, "VirtualAddress", "虚拟内存地址");
-                AddTableRow(ReturnTable, SectionDate.SizeOfRawDataRVA, "SizeOfRawDataRVA", "RVA偏移");
-                AddTableRow(ReturnTable, SectionDate.SizeOfRawDataSize, "SizeOfRawDataSize", "RVA大小");
+                AddTableRow(ReturnTable, SectionDate.SectName, "SectNameRows", "名字");
+                AddTableRow(ReturnTable, SectionDate.VirtualSize, "VirtualSize", "节区大小");
+                AddTableRow(ReturnTable, SectionDate.VirualAddress, "VirtualAddress", "节区所处地址RVA，VA=ImageBase+VirtualAddress");
+                AddTableRow(ReturnTable, SectionDate.SizeOfRawData, "SizeOfRawData", "RVA大小");
                 AddTableRow(ReturnTable, SectionDate.PointerToRawData, "PointerToRawData", "指向RAW数据");
                 AddTableRow(ReturnTable, SectionDate.PointerToRelocations, "PointerToRelocations", "指向定位号");
                 AddTableRow(ReturnTable, SectionDate.PointerToLinenumbers, "PointerToLinenumbers", "指向行数");
