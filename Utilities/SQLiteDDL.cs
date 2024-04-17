@@ -12,11 +12,11 @@ namespace VirusDetectionSystem.Utilities
 
         //如果不存在，创建表格VirusSample
         public const string CT_VirusSample = $"CREATE TABLE IF NOT EXISTS {SQLiteGlobalName.TB_VirusSample}" +
-            "('SampleId' INT AUTO_INCREMENT," +
-            "'SampleName' VARCHAR(255)," +
-            "'SampleHash' VARCHAR(255) NOT NULL, " +
+            "('FileId' INT AUTO_INCREMENT," +
+            "'FileName' VARCHAR(255)," +
+            "'FileHash' VARCHAR(255) NOT NULL, " +
             "'CreatedTime' DATETIME NOT NULL," +
-            "PRIMARY KEY (SampleId));";
+            "PRIMARY KEY (FileId));";
 
         //如果不存在，创建表格ScanRecord
         public const string CT_ScanRecord = $"CREATE TABLE IF NOT EXISTS {SQLiteGlobalName.TB_ScanRecord}" +

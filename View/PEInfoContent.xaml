@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="VirusDetectionSystem.View.PEInfoContent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:converters="clr-namespace:VirusDetectionSystem.Converters"
+             xmlns:controls="clr-namespace:VirusDetectionSystem.Controls"
+             xmlns:local="clr-namespace:VirusDetectionSystem.View"
+             mc:Ignorable="d" 
+             Height="25"
+             d:DesignWidth="500"
+             Foreground="{DynamicResource ControlDefaultForeground}">
+    <UserControl.Resources>
+        <converters:FileNameToExtensionConverter x:Key="FileNameToExtensionConverter" />
+        <converters:FileSizeFormatterConverter x:Key="FileSizeFormatterConverter" />
+        <converters:IconToImageSourceConverter x:Key="IconToImageSourceConverter" />
+        <converters:FileIsPEConverter x:Key="FileIsPEConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <controls:HighlightableTextBlock Grid.Column="0"
+        Text="{Binding SectName, UpdateSourceTrigger=PropertyChanged, FallbackValue=SectName}"
+                                     Foreground="#ffffff"
+                                     ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
+                                     VerticalAlignment="Top"
+                                     HorizontalAlignment="Center"
+                                     FontWeight="Bold" />
+        <TextBlock Grid.Column="1"
+        Text="{Binding VirtualAddress, UpdateSourceTrigger=PropertyChanged,FallbackValue=VirtualAddress}"
+               ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
+               Foreground="#ffffff"
+               TextWrapping="NoWrap"
+               TextTrimming="CharacterEllipsis"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Center"/>
+        <TextBlock Grid.Column="2"
+        Text="{Binding VirtualSize, UpdateSourceTrigger=PropertyChanged,FallbackValue=VirtualSize}"
+               Foreground="#ffffff"
+               ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
+               FontSize="13"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Center" />
+        <TextBlock Grid.Column="3"
+        Text="{Binding SizeOfRawData, UpdateSourceTrigger=PropertyChanged,FallbackValue=SizeOfRawData}"
+               Foreground="#ffffff"
+               ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
+               FontSize="13"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Center" />
+    </Grid>
+</UserControl>

@@ -8,8 +8,8 @@ namespace VirusDetectionSystem.Utilities
 {
     public class SQLiteDML
     {
-        public const string InsertVirusSampleData = $"INSERT OR IGNORE INTO VirusSample (SampleName,SampleHash,CreatedTime) " +
-            $"VALUES (@SampleName,@SampleHash,@CreatedTime)";
+        public const string InsertVirusSampleData = $"INSERT OR IGNORE INTO VirusSample (FileName,FileHash,CreatedTime) " +
+            $"VALUES (@FileName,@FileHash,@CreatedTime)";
 
         public const string InsertScanVirusData = $"INSERT OR IGNORE INTO ScanRecord (ScanPath,FileCount,FolderCount,VirusCount,ScanTime) " +
            $"VALUES (@Path,@FiCou,@FoCou,@ViCou,@Time)";

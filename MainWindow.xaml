@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:VirusDetectionSystem.ViewModel"
-        xmlns:Menu="clr-namespace:VirusDetectionSystem.Utilities"
+        xmlns:menu="clr-namespace:VirusDetectionSystem.Utilities"
         mc:Ignorable="d"
         Title="MainWindow"
         Height="600"
@@ -39,10 +39,10 @@
                 <StackPanel Height="350"
                 Width="228">
 
-                    <!--// Home //-->
+                    <!--// 主页-扫描记录 //-->
 
-                    <Menu:Btn Style="{StaticResource BtnStyle}"
-                  Command="{Binding HomeCommand}"
+                    <menu:Btn Style="{StaticResource BtnStyle}"
+                  Command="{Binding DetectionRecordCommand}"
                   IsChecked="True">
 
                         <Grid>
@@ -55,11 +55,11 @@
 
                         </Grid>
 
-                    </Menu:Btn>
+                    </menu:Btn>
 
                     <!--// 文件扫描 //-->
 
-                    <Menu:Btn Style="{StaticResource BtnStyle}"
+                    <menu:Btn Style="{StaticResource BtnStyle}"
                   Command="{Binding FileScanCommand}">
 
                         <Grid>
@@ -72,11 +72,11 @@
 
                         </Grid>
 
-                    </Menu:Btn>
+                    </menu:Btn>
 
                     <!--// Products //-->
 
-                    <Menu:Btn Style="{StaticResource BtnStyle}"
+                    <menu:Btn Style="{StaticResource BtnStyle}"
                   Command="{Binding PEFileAnalysisCommand}">
 
                         <Grid>
@@ -89,11 +89,11 @@
 
                         </Grid>
 
-                    </Menu:Btn>
+                    </menu:Btn>
 
                     <!--// Orders //-->
 
-                    <Menu:Btn Style="{StaticResource BtnStyle}"
+                    <menu:Btn Style="{StaticResource BtnStyle}"
                   Command="{Binding VirusDatabaseCommand}">
 
                         <Grid>
@@ -106,11 +106,11 @@
 
                         </Grid>
 
-                    </Menu:Btn>
+                    </menu:Btn>
 
                     <!--// Transactions //-->
 
-                    <Menu:Btn Style="{StaticResource BtnStyle}"
+                    <menu:Btn Style="{StaticResource BtnStyle}"
                   Command="{Binding FileWhiteListCommand}">
 
                         <Grid>
@@ -123,11 +123,11 @@
 
                         </Grid>
 
-                    </Menu:Btn>
+                    </menu:Btn>
 
                     <!--// Shipments //-->
 
-                    <Menu:Btn Style="{StaticResource BtnStyle}"
+                    <menu:Btn Style="{StaticResource BtnStyle}"
                   Command="{Binding HexEditorCommand}">
 
                         <Grid>
@@ -140,7 +140,7 @@
 
                         </Grid>
 
-                    </Menu:Btn>
+                    </menu:Btn>
 
                     <!--// Settings //-->
 

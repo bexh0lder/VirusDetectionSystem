@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -34,6 +35,8 @@ namespace VirusDetectionSystem.ViewModel
         {
             FileScanResults = new ObservableCollection<ScanItemVM>();
             _fileScanModel = new FileScanModel();
+            WhiteTableReady();
+
             SelectScanPathCommand = new RelayCommand(SelectScanPath);
             FileScanCommand = new RelayCommand(FileScan);
             VirusDetectCommand = new RelayCommand(VirusDetect);
@@ -80,6 +83,28 @@ namespace VirusDetectionSystem.ViewModel
         #endregion
 
         #region 扫描模块
+
+        // 白名单
+        ObservableCollection<string> WhiteList = null;
+
+        /// <summary>
+        /// 准备白名单字典
+        /// </summary>
+        private void WhiteTableReady()
+        {
+            DataTable WhiteTable = SQLiteHelper.Instance.GetFileWhiteListData();
+
+            WhiteList = new ObservableCollection<string>();
+
+            Task.Run(() =>
+            {
+                for (int i = 0; i < WhiteTable.Rows.Count; i++)
+                {
+                    // 添加文件哈希值
+                    WhiteList.Add(WhiteTable.Rows[i][2].ToString());
+                }
+            });
+        }
 
         /// <summary>
         /// 扫描文件夹路径内的文件和文件夹
@@ -366,7 +391,7 @@ namespace VirusDetectionSystem.ViewModel
                         FileSizeBytes = fInfo.Length,
                         DetectResultColor = Brushes.White,
                         DetectResult = "未扫描",
-                        IsSkipScan = false,
+                        IsSkipScan = WhiteList.Contains(HashHelper.ComputeMD5(path)) ? true : false,
                         IsPE = false,
                         FileType = FileTypeState.File,
                         FileHashMD5 = HashHelper.ComputeMD5(path),
@@ -479,6 +504,9 @@ namespace VirusDetectionSystem.ViewModel
             CurrentDetect = "";
         }
 
+        /// <summary>
+        /// 初始化病毒检测进度条
+        /// </summary>
         private void InitVirusDetectProgress()
         {
             DetectFileCount = int.MaxValue;

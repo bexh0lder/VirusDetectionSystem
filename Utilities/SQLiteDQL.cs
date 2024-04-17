@@ -12,7 +12,7 @@ namespace VirusDetectionSystem.Utilities
         public const string VirusSampleData = $"Select * from {SQLiteGlobalName.TB_VirusSample} order by CreatedTime desc LIMIT 100";
 
         //通过MD5值查询病毒样本表格
-        public const string ScanVirusDataByValue = $"SELECT * FROM {SQLiteGlobalName.TB_VirusSample} WHERE SampleHash = ";
+        public const string ScanVirusDataByValue = $"SELECT * FROM {SQLiteGlobalName.TB_VirusSample} WHERE FileHash = ";
 
         //查询扫描病毒记录表格前十条
         public const string ScanVirusData = $"Select * from {SQLiteGlobalName.TB_ScanRecord} order by ScanTime desc LIMIT 10";

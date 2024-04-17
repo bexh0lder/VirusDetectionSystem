@@ -195,7 +195,7 @@ namespace VirusDetectionSystem.Utilities
                     using (SQLiteCommand cmd = new SQLiteCommand(SQLiteConn))
                     {
                         //cmd.CommandText = $"{SQLiteDQL.ScanVirusDataByValue}'{md5}';";
-                        cmd.CommandText = $"SELECT * FROM VirusSample WHERE SampleHash = '{md5}'";
+                        cmd.CommandText = $"SELECT * FROM VirusSample WHERE FileHash = '{md5}'";
                         //cmd.Parameters.AddWithValue("@value", md5);
                         using (SQLiteDataReader reader = cmd.ExecuteReader())
                         {
@@ -304,7 +304,6 @@ namespace VirusDetectionSystem.Utilities
         /// <summary>
         /// 插入病毒样本数据
         /// </summary>
-        /// <param name="sampleId"></param>
         /// <param name="sampleName"></param>
         /// <param name="sampleHash"></param>
         /// <param name="createdTime"></param>
@@ -322,8 +321,8 @@ namespace VirusDetectionSystem.Utilities
                         command.CommandText = SQLiteDML.InsertVirusSampleData;
 
                         // 设置参数值，避免SQL注入
-                        command.Parameters.AddWithValue("@SampleName", sampleName);
-                        command.Parameters.AddWithValue("@SampleHash", sampleHash);
+                        command.Parameters.AddWithValue("@FileName", sampleName);
+                        command.Parameters.AddWithValue("@FileHash", sampleHash);
                         command.Parameters.AddWithValue("@CreatedTime", createdTime);
 
                         command.ExecuteNonQuery(); // 执行插入数据的SQL语句

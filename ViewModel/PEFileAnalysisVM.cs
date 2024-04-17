@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using VirusDetectionSystem.Utilities;
+
 namespace VirusDetectionSystem.ViewModel
 {
-    class PEFileAnalysisVM
+    public class PEFileAnalysisVM : ViewModelBase
     {
     }
 }

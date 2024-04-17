@@ -4,19 +4,83 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VirusDetectionSystem.View"
-         xmlns:vm="clr-namespace:VirusDetectionSystem.ViewModel"
-         mc:Ignorable="d" 
-         d:DesignHeight="600"
-         d:DesignWidth="622"
-         Style="{StaticResource Page_Style}">
+             xmlns:vm="clr-namespace:VirusDetectionSystem.ViewModel"
+             xmlns:controls="clr-namespace:VirusDetectionSystem.Controls"
+             xmlns:card="clr-namespace:VirusDetectionSystem.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="600"
+             d:DesignWidth="622"
+             Style="{StaticResource Page_Style}">
     <UserControl.DataContext>
         <vm:FileWhiteListVM />
     </UserControl.DataContext>
-    <Grid>
-        <Label Grid.Row="0" FontSize="45" Foreground="#d1d1d2">File White List</Label>
-        <Border CornerRadius="0,20,20,0" Margin="0,5,5,0">
-            <Image Source="/Images/Home.jpg"
-               Stretch="Uniform" />
-        </Border>
+    <Grid Margin="10 30 10 0">
+        <Canvas>
+            <controls:HighlightableTextBlock Text="White-List"
+                                         Selection="{Binding Selection, UpdateSourceTrigger=PropertyChanged, FallbackValue=Selection}"
+                                         Foreground="#ffffff"
+                                         ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
+                                         FontWeight="Bold"
+                                         FontSize="25"
+                                         Canvas.Top="30"
+                                         Canvas.Left="20" />
+
+
+
+            <Button  Style="{StaticResource BoxBtnStyle}"
+                 Width="100"
+                 Canvas.Right="10"
+                 Canvas.Top="30"
+                 Content="添加"
+                 Command="{Binding AddFileIntoWhiteListCommand}" />
+
+        </Canvas>
+        <ListBox Background="#212529"
+             Grid.Column="1"
+             ItemsSource="{Binding WhiteList, UpdateSourceTrigger=PropertyChanged}"
+             HorizontalContentAlignment="Stretch"
+             Margin="15 80 15 15">
+            <ListBox.Template>
+                <ControlTemplate>
+                    <Border BorderBrush="#ffffff"
+                        Padding="4"
+                        BorderThickness="1">
+                        <DockPanel LastChildFill="True">
+                            <Grid DockPanel.Dock="Top"
+                              Height="30">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="80"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0"
+                                   Foreground="#ffffff"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Left">文件名称</Label>
+
+                                <Label Grid.Column="1"
+                                   Foreground="#ffffff"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Left">哈希值</Label>
+
+                                <Label Grid.Column="2"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="#ffffff">添加时间</Label>
+
+                            </Grid>
+                            <ScrollViewer Focusable="False">
+                                <ItemsPresenter />
+                            </ScrollViewer>
+                        </DockPanel>
+                    </Border>
+                </ControlTemplate>
+            </ListBox.Template>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <card:FileWhiteListItem DataContext="{Binding}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </UserControl>

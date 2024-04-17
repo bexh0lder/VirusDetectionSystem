@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="VirusDetectionSystem.View.DetectionRecordItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VirusDetectionSystem.View"
+             xmlns:controls="clr-namespace:VirusDetectionSystem.Controls"
+             xmlns:converters="clr-namespace:VirusDetectionSystem.Converters"
+             mc:Ignorable="d" 
+             Height="30"
+             d:DesignWidth="470"
+             Foreground="{DynamicResource ControlDefaultForeground}">
+    <UserControl.Resources>
+        <converters:FileNameToExtensionConverter x:Key="FileNameToExtensionConverter" />
+        <converters:FileSizeFormatterConverter x:Key="FileSizeFormatterConverter" />
+        <converters:IconToImageSourceConverter x:Key="IconToImageSourceConverter" />
+        <converters:FileIsPEConverter x:Key="FileIsPEConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <TextBlock Text="{Binding ScanTime, UpdateSourceTrigger=PropertyChanged, FallbackValue=FileSizeByte}"
+               ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
+               Margin="0,0,0,0"
+               Foreground="#ffffff"
+               TextWrapping="NoWrap"
+               TextTrimming="CharacterEllipsis"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Left"
+               FontFamily="8"
+               Width="130" />
+        <controls:HighlightableTextBlock Text="{Binding ScanPath, UpdateSourceTrigger=PropertyChanged, FallbackValue=FileName}"
+                                     Foreground="#ffffff"
+                                     ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
+                                     Margin="135,0,75,0"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Center"
+                                     FontWeight="Bold" />
+        <Button Style="{StaticResource BoxBtnStyle}"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Right"
+            Margin="0 0 0 0"
+            Height="24"
+            Width="60"
+            FontSize="12"
+            Content="查看"
+            Command="{Binding RecoverRecordItemCommand}"/>
+    </Grid>
+</UserControl>
