@@ -194,8 +194,11 @@ namespace VirusDetectionSystem.Utilities
                     int result = 0;
                     using (SQLiteCommand cmd = new SQLiteCommand(SQLiteConn))
                     {
-                        //cmd.CommandText = $"{SQLiteDQL.ScanVirusDataByValue}'{md5}';";
-                        cmd.CommandText = $"SELECT * FROM VirusSample WHERE FileHash = '{md5}'";
+                        cmd.CommandText = SQLiteDML.DeleteVirusSampleData;
+
+                        cmd.Parameters.AddWithValue("@SampleHash", md5);
+
+                        //cmd.CommandText = $"SELECT * FROM VirusSample WHERE SampleHash = '{md5}'";
                         //cmd.Parameters.AddWithValue("@value", md5);
                         using (SQLiteDataReader reader = cmd.ExecuteReader())
                         {
@@ -321,8 +324,8 @@ namespace VirusDetectionSystem.Utilities
                         command.CommandText = SQLiteDML.InsertVirusSampleData;
 
                         // 设置参数值，避免SQL注入
-                        command.Parameters.AddWithValue("@FileName", sampleName);
-                        command.Parameters.AddWithValue("@FileHash", sampleHash);
+                        command.Parameters.AddWithValue("@SampleName", sampleName);
+                        command.Parameters.AddWithValue("@SampleHash", sampleHash);
                         command.Parameters.AddWithValue("@CreatedTime", createdTime);
 
                         command.ExecuteNonQuery(); // 执行插入数据的SQL语句
@@ -399,8 +402,8 @@ namespace VirusDetectionSystem.Utilities
                         command.CommandText = SQLiteDML.InsertFileWhiteListData;
 
                         // 设置参数值，避免SQL注入
-                        command.Parameters.AddWithValue("@File_name", File_name);
-                        command.Parameters.AddWithValue("@File_hash", File_hash);
+                        command.Parameters.AddWithValue("@FileName", File_name);
+                        command.Parameters.AddWithValue("@FileHash", File_hash);
                         command.Parameters.AddWithValue("@CreatedTime", CreatedTime);
 
                         command.ExecuteNonQuery(); // 执行插入数据的SQL语句
@@ -412,6 +415,80 @@ namespace VirusDetectionSystem.Utilities
             catch (Exception ex)
             {
                 throw new Exception($"插入病毒样本数据失败:{ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 删除病毒样本数据
+        /// </summary>
+        /// <param name="SampleHash"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public bool DeleteVirusSample(string SampleHash)
+        {
+            try
+            {
+                using (SQLiteConn = new SQLiteConnection(SQLiteConnString))
+                {
+                    SQLiteConn.Open();
+
+                    using (SQLiteCommand command = new SQLiteCommand(SQLiteConn))
+                    {
+                        command.CommandText = SQLiteDML.DeleteVirusSampleData;
+                        
+                        command.Parameters.AddWithValue("@SampleHash", SampleHash);
+
+                        int rows = command.ExecuteNonQuery();
+
+                        SQLiteConn.Close();
+
+                        if (rows > 0)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"删除病毒样本数据失败:{ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 删除白名单数据
+        /// </summary>
+        /// <param name="FileHash"></param>
+        /// <returns></returns>
+        public bool DeleteWhiteFile(string FileHash)
+        {
+            using (SQLiteConn = new SQLiteConnection(SQLiteConnString))
+            {
+                SQLiteConn.Open();
+
+                using (SQLiteCommand command = new SQLiteCommand(SQLiteConn))
+                {
+                    command.CommandText = SQLiteDML.DeleteFileWhiteListData;
+
+                    command.Parameters.AddWithValue("@FileHash", FileHash);
+
+                    int rows = command.ExecuteNonQuery();
+
+                    SQLiteConn.Close();
+
+                    if (rows > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
             }
         }
     }

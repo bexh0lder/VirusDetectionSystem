@@ -163,10 +163,13 @@ namespace VirusDetectionSystem.Utilities
             // 获取文件的PE信息
             DataSet ds = GetPETable();
 
+            List<Import> imports = new List<Import>();
+
+            // 若没有ImportDirectiory，则直接返回空数列
+            if (ds.Tables.Count < 6) return imports;
+
             // 获取ImportDirectory表
             DataTable dt = ds.Tables[6];
-
-            List<Import> imports = new List<Import>();
 
             // 获取Import
             for (int i = 0; i < dt.Rows.Count; i++)

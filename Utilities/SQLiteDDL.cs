@@ -12,11 +12,11 @@ namespace VirusDetectionSystem.Utilities
 
         //如果不存在，创建表格VirusSample
         public const string CT_VirusSample = $"CREATE TABLE IF NOT EXISTS {SQLiteGlobalName.TB_VirusSample}" +
-            "('FileId' INT AUTO_INCREMENT," +
-            "'FileName' VARCHAR(255)," +
-            "'FileHash' VARCHAR(255) NOT NULL, " +
+            "('SampleId' INT AUTO_INCREMENT," +
+            "'SampleName' VARCHAR(255)," +
+            "'SampleHash' VARCHAR(255) NOT NULL, " +
             "'CreatedTime' DATETIME NOT NULL," +
-            "PRIMARY KEY (FileId));";
+            "PRIMARY KEY (SampleId));";
 
         //如果不存在，创建表格ScanRecord
         public const string CT_ScanRecord = $"CREATE TABLE IF NOT EXISTS {SQLiteGlobalName.TB_ScanRecord}" +
@@ -30,10 +30,10 @@ namespace VirusDetectionSystem.Utilities
 
         //如果不存在，创建表格FileWhiteList
         public const string CT_FileWhiteList = $"CREATE TABLE IF NOT EXISTS {SQLiteGlobalName.TB_FileWhiteList}" +
-            "('File_id' INT AUTO_INCREMENT," +
-            "'File_name' VARCHAR(255) NOT NULL," +
-            "'File_hash' VARCHAR(255) NOT NULL," +
+            "('FileId' INT AUTO_INCREMENT," +
+            "'FileName' VARCHAR(255) NOT NULL," +
+            "'FileHash' VARCHAR(255) NOT NULL," +
             "'CreatedTime' DATETIME NOT NULL," +
-            "PRIMARY KEY (File_id));";
+            "PRIMARY KEY (FileId));";
     }
 }

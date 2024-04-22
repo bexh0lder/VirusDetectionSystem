@@ -17,7 +17,7 @@
     </Window.DataContext>
     
     <Grid MouseDown="MouseDownEvent">
-        <Border Background="#212529"
+        <Border Background="#212510"
             CornerRadius="20" />
         <Button x:Name="CloseApp"
             Style="{StaticResource ExitApp}"

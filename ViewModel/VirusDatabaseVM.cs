@@ -108,13 +108,13 @@ namespace VirusDetectionSystem.ViewModel
                     string filePath = openFileDialog.FileName;//获取在文件对话框中选定的路径或者字符串
 
                     ReadTxt(filePath);
-
                 }
             }
             else
             {
                 TaskState(true);//状态：结束
             }
+            
         }
 
         private void TaskState(bool state)
@@ -130,12 +130,22 @@ namespace VirusDetectionSystem.ViewModel
                 {
                     StreamReader sR = File.OpenText(filePath);
 
-                    // 全部读完 
-                    string restOfStream = sR.ReadToEnd();
+                    List<string> lines = new List<string>();
 
-                    string[] data = restOfStream.Split("\r\n");//分割符
+                    string line;
 
-                    RowCount = data.Length;
+                    // 逐行读取直到文件末尾
+                    while ((line = sR.ReadLine()) != null)
+                    {
+                        lines.Add(line);
+                    }
+                    
+                    //// 全部读完 
+                    //string restOfStream = sR.ReadToEnd();
+
+                    //string[] data = restOfStream.Split("\r\n");//分割符
+
+                    RowCount = lines.Count;
 
                     for (int i = 0; i < RowCount; i++)
                     {
@@ -144,14 +154,14 @@ namespace VirusDetectionSystem.ViewModel
                             break;
                         }
 
-                        if (data[i].Contains("#"))
+                        if (lines[i].Contains("#"))
                         {
                             Progress++;
                             continue;
                         }
 
                         //SQLiteHelper.Instance.InsertVirusSampleData(DateTime.Now.ToString("yyyyMMddHHmmssfffff"), "Unknown", data[i], DateTime.Now.ToString("s"));
-                        SQLiteHelper.Instance.InsertVirusSampleData("Unknown", data[i], DateTime.Now.ToString("s"));
+                        SQLiteHelper.Instance.InsertVirusSampleData("Unknown", lines[i], DateTime.Now.ToString("s"));
                         Progress++;
                     }
 

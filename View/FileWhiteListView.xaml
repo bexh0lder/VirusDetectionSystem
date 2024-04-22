@@ -78,7 +78,14 @@
             </ListBox.Template>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <card:FileWhiteListItem DataContext="{Binding}" />
+                    <card:FileWhiteListItem DataContext="{Binding}" >
+                        <card:FileWhiteListItem.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="删除"
+                                          Command="{Binding ItemDeleteCommand}" />
+                            </ContextMenu>
+                        </card:FileWhiteListItem.ContextMenu>
+                    </card:FileWhiteListItem>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

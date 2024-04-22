@@ -25,9 +25,7 @@ namespace VirusDetectionSystem.View
 {
     public class DosItem : ViewModelBase
     {
-        public DosItem()
-        {
-        }
+        public DosItem(){}
 
         private string _fileName = string.Empty;
         public string fileName
@@ -99,55 +97,6 @@ namespace VirusDetectionSystem.View
         /// <param name="e"></param>
         private void ItemInfoPageMove_Click(object sender, RoutedEventArgs e)
         {
-            //ListBox listBox = (ListBox)sender;
-
-            //ItemViewModel item = (ItemViewModel)listBox.SelectedItem;
-
-            //if (item == null)
-            //{
-            //    return;
-            //}
-
-            //if (item.IsPE)//是PE文件
-            //{
-            //    ItemPgaeShow();
-
-            //    DosFileName.Text = item.FileName;
-
-            //    PEHelper pEHelper = new PEHelper(item.FilePath);
-
-            //    DosItems.Add(new DosItem("e_magic", BitConverter.ToString(pEHelper._DosHeader.e_magic), "Magic number"));
-            //    DosItems.Add(new DosItem("e_cblp", BitConverter.ToString(pEHelper._DosHeader.e_cblp), "Bytes on last page of file"));
-            //    DosItems.Add(new DosItem("e_cp", BitConverter.ToString(pEHelper._DosHeader.e_cp), "Pages in file"));
-            //    DosItems.Add(new DosItem("e_crlc", BitConverter.ToString(pEHelper._DosHeader.e_crlc), "Relocations"));
-            //    DosItems.Add(new DosItem("e_cparhdr", BitConverter.ToString(pEHelper._DosHeader.e_cparhdr), "Size of header in paragraphs"));
-            //    DosItems.Add(new DosItem("e_minalloc", BitConverter.ToString(pEHelper._DosHeader.e_minalloc), "Minimum extra paragraphs needed"));
-            //    DosItems.Add(new DosItem("e_maxalloc", BitConverter.ToString(pEHelper._DosHeader.e_maxalloc), "Maximum extra paragraphs needed"));
-            //    DosItems.Add(new DosItem("e_ss", BitConverter.ToString(pEHelper._DosHeader.e_ss), "Initial (relative) SS value"));
-            //    DosItems.Add(new DosItem("e_sp", BitConverter.ToString(pEHelper._DosHeader.e_sp), "Initial SP value"));
-            //    DosItems.Add(new DosItem("e_csum", BitConverter.ToString(pEHelper._DosHeader.e_csum), "Checksum"));
-            //    DosItems.Add(new DosItem("e_ip", BitConverter.ToString(pEHelper._DosHeader.e_ip), "Initial IP value"));
-            //    DosItems.Add(new DosItem("e_cs", BitConverter.ToString(pEHelper._DosHeader.e_cs), "Initial (relative) CS value"));
-
-            //    DosItems.Add(new DosItem("e_rva", BitConverter.ToString(pEHelper._DosHeader.e_rva), ""));
-            //    DosItems.Add(new DosItem("e_fg", BitConverter.ToString(pEHelper._DosHeader.e_fg), ""));
-            //    DosItems.Add(new DosItem("e_bl1", BitConverter.ToString(pEHelper._DosHeader.e_bl1), ""));
-            //    DosItems.Add(new DosItem("e_fg", BitConverter.ToString(pEHelper._DosHeader.e_fg), ""));
-
-
-            //    DosItems.Add(new DosItem("e_oemid", BitConverter.ToString(pEHelper._DosHeader.e_oemid), "OEM identifier (for e_oeminfo)"));
-            //    DosItems.Add(new DosItem("e_oeminfo", BitConverter.ToString(pEHelper._DosHeader.e_oeminfo), "OEM information; e_oemid specific"));
-
-            //    DosItems.Add(new DosItem("e_bl2", BitConverter.ToString(pEHelper._DosHeader.e_bl2), ""));
-            //    DosItems.Add(new DosItem("e_PESTAR", BitConverter.ToString(pEHelper._DosHeader.e_PESTAR), ""));
-
-            //    DosFileConent.ItemsSource = DosItems;
-            //}
-            //else//不是PE文件
-            //{
-
-            //}
-
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.ValidateNames = true; // 验证用户输入是否是一个有效的Windows文件名
             openFileDialog.CheckFileExists = true; //验证路径的有效性
@@ -167,16 +116,6 @@ namespace VirusDetectionSystem.View
                     dosItem.header = pEHelper.GetHeader();
 
                     dosItem.Sections = pEHelper.GetSections();
-
-                    ////section数量大于4，只显示4行
-                    //if (dosItem.sections.Count>4 )
-                    //{
-                    //    dosItem.sections.CopyTo(0, dosItem.Fold_sections, 0, 4);
-                    //}
-                    //else//section数量小于4，显示全部
-                    //{
-                    //    dosItem.sections.CopyTo(dosItem.Fold_sections);
-                    //}
 
                     dosItem.imports = pEHelper.GetImports();
 
@@ -221,8 +160,6 @@ namespace VirusDetectionSystem.View
                 return false;
             }
         }
-
-
 
         /// <summary>
         /// 某文件PE结构页面的返回

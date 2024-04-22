@@ -21,7 +21,7 @@ namespace VirusDetectionSystem.ViewModel
             set { _currentView = value; OnPropertyChanged(); }
         }
 
-        public ICommand HomeCommand { get; set; }
+        
 
         public ICommand DetectionRecordCommand { get; set; }
         public ICommand FileScanCommand { get; set; }
@@ -30,9 +30,10 @@ namespace VirusDetectionSystem.ViewModel
         public ICommand FileWhiteListCommand { get; set; }
         public ICommand HexEditorCommand { get; set; }
 
-        public ICommand SettingsCommand { get; set; }
+        //public ICommand HomeCommand { get; set; }
+        //public ICommand SettingsCommand { get; set; }
 
-        private void Home(object obj) => CurrentView = new HomeVM();
+        
 
         private void DetectionRecordView(object obj) => CurrentView = new DetectionRecordVM();
         private void FileScanView(object obj) => CurrentView = new FileScanVM();
@@ -41,11 +42,12 @@ namespace VirusDetectionSystem.ViewModel
         private void FileWhiteListView(object obj) => CurrentView = new FileWhiteListVM();
         private void HexEditorView(object obj) => CurrentView = new HexEditorVM();
 
-        private void Setting(object obj) => CurrentView = new SettingVM();
+        //private void Home(object obj) => CurrentView = new HomeVM();
+        //private void Setting(object obj) => CurrentView = new SettingVM();
 
         public NavigationVM()
         {
-            HomeCommand = new RelayCommand(Home);
+            
 
             DetectionRecordCommand = new RelayCommand(DetectionRecordView);
             FileScanCommand = new RelayCommand(FileScanView);
@@ -54,7 +56,8 @@ namespace VirusDetectionSystem.ViewModel
             FileWhiteListCommand = new RelayCommand(FileWhiteListView);
             HexEditorCommand = new RelayCommand(HexEditorView);
 
-            SettingsCommand = new RelayCommand(Setting);
+            //HomeCommand = new RelayCommand(Home);
+            //SettingsCommand = new RelayCommand(Setting);
 
             // 起始页
             //CurrentView = new HomeVM();

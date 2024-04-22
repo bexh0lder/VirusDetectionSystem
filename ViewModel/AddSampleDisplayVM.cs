@@ -35,6 +35,14 @@ namespace VirusDetectionSystem.ViewModel
         private void AddSample(object e)
         {
             //SQLiteHelper.Instance.InsertVirusSampleData(DateTime.Now.ToString("yyyyMMddHHmmssfffff"), VirusName, HashValue, DateTime.Now.ToString("s"));
+            if (HashValue == string.Empty)
+            {
+                MessageBox.Show("哈希值为空");
+            }
+            if (VirusName == string.Empty)
+            {
+                VirusName = "Unknown";
+            }
             SQLiteHelper.Instance.InsertVirusSampleData(VirusName, HashValue, DateTime.Now.ToString("s"));
 
             MessageBox.Show("导入成功");
